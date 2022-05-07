@@ -8,6 +8,7 @@ class Interpreter {
   }
 
   public initialize(): void {
+    console.log(this.args);
     if (this.args.length > 3) {
       console.log('Usage: tlox [script]');
     } else if (this.args.length === 3) {
@@ -18,35 +19,23 @@ class Interpreter {
     }
   }
 
-  private runFile(path: string): void {
+  public runFile(path: string): void {
     let data = '';
     const readableStream = fs.createReadStream(path, 'utf8');
-    readableStream.on('data', (chunk: string | Buffer): void => {
+    readableStream.on('data', function (chunk: string | Buffer): void {
       data += chunk;
     });
-    readableStream.on('error', (err: Error): void => {
+    readableStream.on('error', function (err: Error): void {
       console.error(`File read error: ${err.message}`);
       return;
     });
-    readableStream.on('end', (): string => data);
+    readableStream.on('end', function (): string {
+      return data;
+    });
   }
 
-  private runPrompt(): void {
+  public runPrompt(): void {
     repl.start();
-  }
-
-  private run(source: string): void {
-    const scanner = new Scanner(source);
-    const tokens = scanner.scanTokens();
-    tokens.forEach(token => console.log(token));
-  }
-
-  private error(line: number, msg: string): void {
-    this.report(line, '', msg);
-  }
-
-  private report(line: number, where: string, msg: string): void {
-    console.error('[line ' + line + '] Error' + where + ': ' + msg);
   }
 }
 

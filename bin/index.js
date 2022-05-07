@@ -1,2 +1,2 @@
 #!/usr/local/bin/node
-require('../build/src/Lox');
+require('../build/src/lox');
