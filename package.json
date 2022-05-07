@@ -7,13 +7,13 @@
   "files": [
     "build/src"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "keywords": [],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
+    "compile": "npx tsc",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
