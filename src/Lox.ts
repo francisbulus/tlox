@@ -2,6 +2,7 @@ import fs = require('fs');
 import path = require('path');
 import repl = require('node:repl');
 import Scanner from './Scanner';
+import Token from './token';
 
 class Interpreter {
   private hadError: boolean;
@@ -45,10 +46,10 @@ class Interpreter {
   private run(source: string): void {
     const scanner = new Scanner(source);
     const tokens = scanner.scanTokens();
-    tokens.forEach((token: any) => console.log(token));
+    tokens.forEach((token: Token) => console.log(token));
   }
 
-  private error(line: number, msg: string): void {
+  public error(line: number, msg: string): void {
     this.report(line, '', msg);
   }
 
@@ -59,4 +60,5 @@ class Interpreter {
 }
 
 const Lox = new Interpreter(process.argv);
+export {Lox};
 Lox.init();
