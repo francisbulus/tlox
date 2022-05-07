@@ -1,13 +1,17 @@
 import fs = require('fs');
 import path = require('path');
 import repl = require('node:repl');
+import Scanner from './Scanner';
 
 class Interpreter {
+  private hadError: boolean;
+
   constructor(private args: string[]) {
     this.args = args;
+    this.hadError = false;
   }
 
-  public initialize(): void {
+  public init(): void {
     if (this.args.length > 3) {
       console.log('Usage: tlox [script]');
     } else if (this.args.length === 3) {
@@ -28,7 +32,10 @@ class Interpreter {
       console.error(`File read error: ${err.message}`);
       return;
     });
-    readableStream.on('end', (): string => data);
+    readableStream.on('end', (): void => {
+      this.run(data);
+      if (this.hadError) process.exit(1);
+    });
   }
 
   private runPrompt(): void {
@@ -38,7 +45,7 @@ class Interpreter {
   private run(source: string): void {
     const scanner = new Scanner(source);
     const tokens = scanner.scanTokens();
-    tokens.forEach(token => console.log(token));
+    tokens.forEach((token: any) => console.log(token));
   }
 
   private error(line: number, msg: string): void {
@@ -47,8 +54,9 @@ class Interpreter {
 
   private report(line: number, where: string, msg: string): void {
     console.error('[line ' + line + '] Error' + where + ': ' + msg);
+    this.hadError = true;
   }
 }
 
 const Lox = new Interpreter(process.argv);
-Lox.initialize();
+Lox.init();

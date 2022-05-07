@@ -1,43 +1,77 @@
-import fs = require('fs');
-import path = require('path');
-import repl = require('node:repl');
+import {EOF} from 'dns';
+import Token from './token';
+import {TokenType} from './types';
 
-class Interpreter {
-  constructor(private args: string[]) {
-    this.args = args;
+export default class Scanner {
+  private tokens: Token[];
+  private start: number;
+  private current: number;
+  private line: number;
+  constructor(private source: string) {
+    this.source = source;
+    this.tokens = [];
+    this.start = 0;
+    this.current = 0;
+    this.line = 1;
   }
 
-  public initialize(): void {
-    console.log(this.args);
-    if (this.args.length > 3) {
-      console.log('Usage: tlox [script]');
-    } else if (this.args.length === 3) {
-      const fullPath: string = path.join('data/', this.args[2]);
-      this.runFile(fullPath);
-    } else {
-      this.runPrompt();
+  public scanTokens() {
+    while (!this.isAtEnd()) {
+      this.start = this.current;
+      this.scanToken();
+    }
+    this.tokens.push(new Token(TokenType.EOF, '', null, this.line));
+    return this.tokens;
+  }
+
+  public isAtEnd(): boolean {
+    return this.current >= this.source.length;
+  }
+
+  private scanToken(): void {
+    const c = this.advance();
+    switch (c) {
+      case '(':
+        this.addToken(TokenType.LEFT_PAREN);
+        break;
+      case ')':
+        this.addToken(TokenType.RIGHT_PAREN);
+        break;
+      case '{':
+        this.addToken(TokenType.LEFT_BRACE);
+        break;
+      case '}':
+        this.addToken(TokenType.RIGHT_BRACE);
+        break;
+      case ',':
+        this.addToken(TokenType.COMMA);
+        break;
+      case '.':
+        this.addToken(TokenType.DOT);
+        break;
+      case '-':
+        this.addToken(TokenType.MINUS);
+        break;
+      case '+':
+        this.addToken(TokenType.PLUS);
+        break;
+      case ';':
+        this.addToken(TokenType.SEMICOLON);
+        break;
+      case '*':
+        this.addToken(TokenType.STAR);
+        break;
     }
   }
 
-  public runFile(path: string): void {
-    let data = '';
-    const readableStream = fs.createReadStream(path, 'utf8');
-    readableStream.on('data', function (chunk: string | Buffer): void {
-      data += chunk;
-    });
-    readableStream.on('error', function (err: Error): void {
-      console.error(`File read error: ${err.message}`);
-      return;
-    });
-    readableStream.on('end', function (): string {
-      return data;
-    });
+  private advance(): string {
+    return this.source.charAt(this.current++);
   }
 
-  public runPrompt(): void {
-    repl.start();
+  private addToken(type: TokenType, literal?: object) {
+    if (literal !== undefined) {
+      let text = this.source.substring(this.start, this.current);
+      this.tokens.push(new Token(type, text, literal, this.line));
+    } else this.addToken(type);
   }
 }
-
-const Lox = new Interpreter(process.argv);
-Lox.initialize();
