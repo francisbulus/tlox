@@ -3,6 +3,7 @@ import path = require('path');
 import repl = require('node:repl');
 import Scanner from './scanner';
 import Token from './token';
+import GenerateAst from './generator';
 
 class Interpreter {
   private hadError: boolean;
@@ -17,6 +18,11 @@ class Interpreter {
       console.log('Usage: tlox [script]');
     } else if (this.args.length === 3) {
       const fullPath: string = path.join('data/', this.args[2]);
+      if (this.args[3] === 'gen') {
+        const ast = new GenerateAst('gen/');
+        ast.generate();
+        return;
+      }
       this.runFile(fullPath);
     } else {
       this.runPrompt();

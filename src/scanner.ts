@@ -17,7 +17,7 @@ export default class Scanner {
     this.line = 1;
   }
 
-  public scanTokens() {
+  public scanTokens(): Token[] {
     while (!this.isAtEnd()) {
       this.start = this.current;
       this.scanToken();
@@ -192,7 +192,5 @@ export default class Scanner {
       let text = this.source.substring(this.start, this.current);
       this.tokens.push(new Token(type, text, literal, this.line));
     } else this.addToken({type, literal: null});
-
-    console.log(this.tokens);
   }
 }
