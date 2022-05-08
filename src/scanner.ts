@@ -110,7 +110,7 @@ export default class Scanner {
 
   private identifier(): void {
     while (this.isAlphaNumeric(this.peek())) this.advance();
-    let text = this.source.substring(this.start, this.current);
+    const text = this.source.substring(this.start, this.current);
     let type = KEYWORDS[text];
     if (type == undefined) type = TokenType.IDENTIFIER;
     this.addToken({type});
@@ -140,7 +140,7 @@ export default class Scanner {
     }
 
     this.advance();
-    let value = this.source.substring(this.start + 1, this.current - 1);
+    const value = this.source.substring(this.start + 1, this.current - 1);
     this.addToken({type: TokenType.STRING, literal: value});
   }
 
@@ -189,7 +189,7 @@ export default class Scanner {
     literal?: LiteralType;
   }): void {
     if (literal !== undefined) {
-      let text = this.source.substring(this.start, this.current);
+      const text = this.source.substring(this.start, this.current);
       this.tokens.push(new Token(type, text, literal, this.line));
     } else this.addToken({type, literal: null});
   }

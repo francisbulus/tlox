@@ -1,18 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-// import {Generator} from './types';
+const child_process_1 = require("child_process");
+const util_1 = require("util");
+const __exec = (0, util_1.promisify)(child_process_1.exec);
 class GenerateAst {
     generate() {
         this.defineAst('Expression', [
             'Binary   > left: Expression, operator: Token, right: Expression',
             'Grouping > expression: Expression',
-            'Literal  > value: Literal',
+            'Literal  > value: any',
             'Unary    > operator: Token, right: Expression',
         ]);
     }
+    async lint() {
+        const { stdout, stderr } = await __exec('yarn run lint');
+        console.log('stdout:', stdout);
+        console.log('stderr:', stderr);
+    }
     writer(content, path) {
         fs.appendFileSync(path, content);
+        this.lint();
     }
     defineAst(baseName, types) {
         this.path = `src/${baseName.toLowerCase()}.ts`;

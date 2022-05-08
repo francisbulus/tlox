@@ -109,7 +109,7 @@ class Scanner {
     identifier() {
         while (this.isAlphaNumeric(this.peek()))
             this.advance();
-        let text = this.source.substring(this.start, this.current);
+        const text = this.source.substring(this.start, this.current);
         let type = constants_1.KEYWORDS[text];
         if (type == undefined)
             type = types_1.TokenType.IDENTIFIER;
@@ -139,7 +139,7 @@ class Scanner {
             return;
         }
         this.advance();
-        let value = this.source.substring(this.start + 1, this.current - 1);
+        const value = this.source.substring(this.start + 1, this.current - 1);
         this.addToken({ type: types_1.TokenType.STRING, literal: value });
     }
     isAtEnd() {
@@ -177,7 +177,7 @@ class Scanner {
     }
     addToken({ type, literal, }) {
         if (literal !== undefined) {
-            let text = this.source.substring(this.start, this.current);
+            const text = this.source.substring(this.start, this.current);
             this.tokens.push(new token_1.default(type, text, literal, this.line));
         }
         else
