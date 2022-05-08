@@ -4,7 +4,7 @@ export default class Token {
   constructor(
     private type: TokenType,
     private lexeme: string,
-    private literal: object | null,
+    private literal: object | null | string | number,
     private line: number
   ) {
     this.type = type;

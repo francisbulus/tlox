@@ -1,3 +1,5 @@
+import Token from './token';
+
 export enum TokenType {
   // Single-character tokens.
   LEFT_PAREN = 'LEFT_PAREN',
@@ -46,3 +48,9 @@ export enum TokenType {
   WHILE = 'WHILE',
   EOF = 'EOF',
 }
+
+export interface KeywordMap {
+  readonly [identifier: string]: TokenType;
+}
+
+export type Literal = object | null | string | number;

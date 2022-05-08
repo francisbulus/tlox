@@ -1,6 +1,7 @@
 import Token from './token';
-import {TokenType} from './types';
+import {TokenType, Literal} from './types';
 import {Lox} from './Lox';
+import {KEYWORDS} from './constants';
 
 export default class Scanner {
   private tokens: Token[];
@@ -29,56 +30,60 @@ export default class Scanner {
     const c = this.advance();
     switch (c) {
       case '(':
-        this.addToken(TokenType.LEFT_PAREN);
+        this.addToken({type: TokenType.LEFT_PAREN});
         break;
       case ')':
-        this.addToken(TokenType.RIGHT_PAREN);
+        this.addToken({type: TokenType.RIGHT_PAREN});
         break;
       case '{':
-        this.addToken(TokenType.LEFT_BRACE);
+        this.addToken({type: TokenType.LEFT_BRACE});
         break;
       case '}':
-        this.addToken(TokenType.RIGHT_BRACE);
+        this.addToken({type: TokenType.RIGHT_BRACE});
         break;
       case ',':
-        this.addToken(TokenType.COMMA);
+        this.addToken({type: TokenType.COMMA});
         break;
       case '.':
-        this.addToken(TokenType.DOT);
+        this.addToken({type: TokenType.DOT});
         break;
       case '-':
-        this.addToken(TokenType.MINUS);
+        this.addToken({type: TokenType.MINUS});
         break;
       case '+':
-        this.addToken(TokenType.PLUS);
+        this.addToken({type: TokenType.PLUS});
         break;
       case ';':
-        this.addToken(TokenType.SEMICOLON);
+        this.addToken({type: TokenType.SEMICOLON});
         break;
       case '*':
-        this.addToken(TokenType.STAR);
+        this.addToken({type: TokenType.STAR});
         break;
       case '!':
-        this.addToken(this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+        this.addToken({
+          type: this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG,
+        });
         break;
       case '=':
-        this.addToken(
-          this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL
-        );
+        this.addToken({
+          type: this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL,
+        });
         break;
       case '<':
-        this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+        this.addToken({
+          type: this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS,
+        });
         break;
       case '>':
-        this.addToken(
-          this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER
-        );
+        this.addToken({
+          type: this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER,
+        });
         break;
       case '/':
         if (this.match('/')) {
           while (this.peek() != '\n' && !this.isAtEnd()) this.advance();
         } else {
-          this.addToken(TokenType.SLASH);
+          this.addToken({type: TokenType.SLASH});
         }
         break;
       case ' ':
@@ -88,10 +93,55 @@ export default class Scanner {
       case '\n':
         this.line++;
         break;
+      case '"':
+        this.string();
+        break;
       default:
-        Lox.error(this.line, 'Unexpected character.');
+        if (this.isDigit(c)) {
+          this.number();
+        } else if (this.isAlpha(c)) {
+          this.identifier();
+        } else {
+          Lox.error(this.line, 'Unexpected character.');
+        }
         break;
     }
+  }
+
+  private identifier(): void {
+    while (this.isAlphaNumeric(this.peek())) this.advance();
+    let text = this.source.substring(this.start, this.current);
+    let type = KEYWORDS[text];
+    if (type == null || type == undefined) type = TokenType.IDENTIFIER;
+    this.addToken({type: TokenType.IDENTIFIER});
+  }
+
+  private number(): void {
+    while (this.isDigit(this.peek())) this.advance();
+    if (this.peek() == '.' && this.isDigit(this.peekNext())) {
+      this.advance();
+      while (this.isDigit(this.peek())) this.advance();
+    }
+    this.addToken({
+      type: TokenType.NUMBER,
+      literal: parseFloat(this.source.substring(this.start, this.current)),
+    });
+  }
+
+  private string(): void {
+    while (this.peek() != '"' && !this.isAtEnd()) {
+      if (this.peek() == '\n') this.line++;
+      this.advance();
+    }
+
+    if (this.isAtEnd()) {
+      Lox.error(this.line, 'Unterminated string.');
+      return;
+    }
+
+    this.advance();
+    let value = this.source.substring(this.start + 1, this.current - 1);
+    this.addToken({type: TokenType.STRING, literal: value});
   }
 
   private isAtEnd(): boolean {
@@ -110,14 +160,37 @@ export default class Scanner {
     return this.source.charAt(this.current);
   }
 
+  private peekNext(): string {
+    if (this.current + 1 >= this.source.length) return '\0';
+    return this.source.charAt(this.current + 1);
+  }
+
+  private isAlpha(c: string): boolean {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+  }
+
+  private isAlphaNumeric(c: string): boolean {
+    return this.isAlpha(c) || this.isDigit(c);
+  }
+
+  private isDigit(c: string): boolean {
+    return c >= '0' && c <= '9';
+  }
+
   private advance(): string {
     return this.source.charAt(this.current++);
   }
 
-  private addToken(type: TokenType, literal?: object | null): void {
+  private addToken({
+    type,
+    literal,
+  }: {
+    type: TokenType;
+    literal?: Literal;
+  }): void {
     if (literal !== undefined) {
       let text = this.source.substring(this.start, this.current);
       this.tokens.push(new Token(type, text, literal, this.line));
-    } else this.addToken(type);
+    } else this.addToken({type, literal: null});
   }
 }
