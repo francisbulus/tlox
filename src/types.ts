@@ -1,5 +1,3 @@
-import Token from './token';
-
 export enum TokenType {
   // Single-character tokens.
   LEFT_PAREN = 'LEFT_PAREN',

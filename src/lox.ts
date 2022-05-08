@@ -1,7 +1,7 @@
 import fs = require('fs');
 import path = require('path');
 import repl = require('node:repl');
-import Scanner from './Scanner';
+import Scanner from './scanner';
 import Token from './token';
 
 class Interpreter {
@@ -35,7 +35,8 @@ class Interpreter {
     });
     readableStream.on('end', (): void => {
       this.run(data);
-      if (this.hadError) process.exit(1);
+      if (this.hadError)
+        throw Error("Looks like we've run into an error reading the file.");
     });
   }
 

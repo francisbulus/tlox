@@ -1,6 +1,6 @@
 import Token from './token';
 import {TokenType, Literal} from './types';
-import {Lox} from './Lox';
+import {Lox} from './lox';
 import {KEYWORDS} from './constants';
 
 export default class Scanner {
