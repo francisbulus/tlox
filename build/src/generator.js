@@ -1,15 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const path = require("path");
 // import {Generator} from './types';
 class GenerateAst {
-    constructor(outputDir) {
-        this.outputDir = outputDir;
-        this.outputDir = outputDir;
-        this.path = path.join(`src/`, `${this.outputDir}.ts`);
-        console.log(this.path);
-    }
+    //   constructor() {
+    //     this.path = '';
+    //     this.generate();
+    //   }
     generate() {
         this.defineAst('Expr', [
             'Binary   > private left: Expr, private operator: Token, private right: Expr',
@@ -19,13 +16,10 @@ class GenerateAst {
         ]);
     }
     writer(content, path) {
-        fs.appendFile(path, content, err => {
-            if (err)
-                throw Error(err === null || err === void 0 ? void 0 : err.message);
-            console.log(`${content.substring(0, 30)}... was added`);
-        });
+        fs.appendFileSync(path, content);
     }
     defineAst(baseName, types) {
+        this.path = `src/${baseName.toLowerCase()}.ts`;
         const content = `class ${baseName}{ 
         `;
         this.writer(content, this.path);
@@ -42,11 +36,14 @@ class GenerateAst {
     ${className} extends ${baseName} {
         constructor(${fieldList}) {
             ${(() => {
+            let str = '';
             fields.forEach(field => {
                 const name = field.split(' ')[1].slice(0, -1);
-                return `this.${name} = ${name}
+                str += `this.${name} = ${name}
+
                 `;
             });
+            return str;
         })()}
         }
     }`;

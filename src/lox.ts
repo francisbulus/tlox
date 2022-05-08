@@ -17,12 +17,12 @@ class Interpreter {
     if (this.args.length > 3) {
       console.log('Usage: tlox [script]');
     } else if (this.args.length === 3) {
-      const fullPath: string = path.join('data/', this.args[2]);
-      if (this.args[3] === 'gen') {
-        const ast = new GenerateAst('gen/');
+      if (this.args[2] === 'gen') {
+        const ast = new GenerateAst();
         ast.generate();
-        return;
+        process.exit(0);
       }
+      const fullPath: string = path.join('data/', this.args[2]);
       this.runFile(fullPath);
     } else {
       this.runPrompt();
