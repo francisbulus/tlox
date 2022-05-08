@@ -81,7 +81,7 @@ export default class Scanner {
         break;
       case '/':
         if (this.match('/')) {
-          while (this.peek() != '\n' && !this.isAtEnd()) this.advance();
+          while (this.peek() !== '\n' && !this.isAtEnd()) this.advance();
         } else {
           this.addToken({type: TokenType.SLASH});
         }
@@ -112,13 +112,13 @@ export default class Scanner {
     while (this.isAlphaNumeric(this.peek())) this.advance();
     const text = this.source.substring(this.start, this.current);
     let type = KEYWORDS[text];
-    if (type == undefined) type = TokenType.IDENTIFIER;
+    if (type === undefined) type = TokenType.IDENTIFIER;
     this.addToken({type});
   }
 
   private number(): void {
     while (this.isDigit(this.peek())) this.advance();
-    if (this.peek() == '.' && this.isDigit(this.peekNext())) {
+    if (this.peek() === '.' && this.isDigit(this.peekNext())) {
       this.advance();
       while (this.isDigit(this.peek())) this.advance();
     }
@@ -129,8 +129,8 @@ export default class Scanner {
   }
 
   private string(): void {
-    while (this.peek() != '"' && !this.isAtEnd()) {
-      if (this.peek() == '\n') this.line++;
+    while (this.peek() !== '"' && !this.isAtEnd()) {
+      if (this.peek() === '\n') this.line++;
       this.advance();
     }
 
@@ -150,7 +150,7 @@ export default class Scanner {
 
   private match(expected: string): boolean {
     if (this.isAtEnd()) return false;
-    if (this.source.charAt(this.current) != expected) return false;
+    if (this.source.charAt(this.current) !== expected) return false;
     this.current++;
     return true;
   }
@@ -166,7 +166,7 @@ export default class Scanner {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c === '_';
   }
 
   private isAlphaNumeric(c: string): boolean {
