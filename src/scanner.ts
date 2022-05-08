@@ -112,8 +112,8 @@ export default class Scanner {
     while (this.isAlphaNumeric(this.peek())) this.advance();
     let text = this.source.substring(this.start, this.current);
     let type = KEYWORDS[text];
-    if (type == null || type == undefined) type = TokenType.IDENTIFIER;
-    this.addToken({type: TokenType.IDENTIFIER});
+    if (type == undefined) type = TokenType.IDENTIFIER;
+    this.addToken({type});
   }
 
   private number(): void {
