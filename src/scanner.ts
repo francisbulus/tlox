@@ -1,5 +1,5 @@
 import Token from './token';
-import {TokenType, Literal} from './types';
+import {TokenType, LiteralType} from './types';
 import {Lox} from './lox';
 import {KEYWORDS} from './constants';
 
@@ -186,7 +186,7 @@ export default class Scanner {
     literal,
   }: {
     type: TokenType;
-    literal?: Literal;
+    literal?: LiteralType;
   }): void {
     if (literal !== undefined) {
       let text = this.source.substring(this.start, this.current);

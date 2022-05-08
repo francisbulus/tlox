@@ -3,5 +3,7 @@ export default class GenerateAst {
     generate(): void;
     private writer;
     private defineAst;
+    private setFieldMetadata;
     private defineType;
+    private generateClassTemplate;
 }

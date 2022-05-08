@@ -4,16 +4,12 @@ import path = require('path');
 
 export default class GenerateAst {
   private path!: string;
-  //   constructor() {
-  //     this.path = '';
-  //     this.generate();
-  //   }
   public generate(): void {
     this.defineAst('Expression', [
-      'Binary   > private left: Expr, private operator: Token, private right: Expr',
-      'Grouping > private expression: Expr',
-      'Literal  > private value: Literal',
-      'Unary    > private operator: Token, private right: Expr',
+      'Binary   > left: Expression, operator: Token, right: Expression',
+      'Grouping > expression: Expression',
+      'Literal  > value: any',
+      'Unary    > operator: Token, right: Expression',
     ]);
   }
 
@@ -23,39 +19,52 @@ export default class GenerateAst {
 
   private defineAst(baseName: string, types: string[]): void {
     this.path = `src/${baseName.toLowerCase()}.ts`;
-    const content = `class ${baseName}{ 
-        
-        `;
-    this.writer(content, this.path);
-    types.forEach(type => {
+    types.forEach((type, index) => {
       const className = type.split('>')[0].trim();
       const fields = type.split('>')[1].trim();
+      const baseClassContent = `
+      import Token from './token'
+      
+      class ${baseName}{ 
+        constructor() {}
+    }
+        `;
+      if (index === 0) this.writer(baseClassContent, this.path);
       this.defineType(baseName, className, fields);
     });
-    this.writer(`}`, this.path);
+  }
+
+  private setFieldMetadata(fields: string): string {
+    let str = '';
+    fields.split(', ').forEach(field => {
+      str += `readonly ${field}, `;
+    });
+    return str;
   }
 
   private defineType(
     baseName: string,
     className: string,
-    fieldList: string
+    fields: string
   ): void {
-    const fields: string[] = fieldList.split(', ');
     const content = `
-    ${className} extends ${baseName} {
-        constructor(${fieldList}) {
-            ${((): string => {
-              let str = '';
-              fields.forEach(field => {
-                const name = field.split(' ')[1].slice(0, -1);
-                str += `this.${name} = ${name}
-
-                `;
-              });
-              return str;
-            })()}
+    export class ${className} extends ${baseName} {
+        constructor(${this.setFieldMetadata(fields)}) {
+            super()
+            ${this.generateClassTemplate(fields)}
         }
     }`;
     this.writer(content, this.path);
+  }
+
+  private generateClassTemplate(fields: string): string {
+    const list: string[] = fields.split(', ');
+    let str = '';
+    list.forEach(field => {
+      const name = field.split(' ')[0].slice(0, -1);
+      str += `this.${name} = ${name}
+          `;
+    });
+    return str;
   }
 }
