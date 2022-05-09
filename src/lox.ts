@@ -20,12 +20,12 @@ class Interpreter {
       if (this.args[2] === 'gen') {
         const ast = new GenerateAst();
         ast.generate();
-        process.exit(0);
+        return;
       }
       const fullPath: string = path.join('data/', this.args[2]);
       this.runFile(fullPath);
     } else {
-      this.runPrompt();
+      this.runPrompt(); //This is not implemented yet
     }
   }
 
