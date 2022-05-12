@@ -1,6 +1,6 @@
 import Token from './token';
 
-abstract class Expression {
+export abstract class Expression {
   constructor() {}
   abstract accept<R>(visitor: ExpressionVisitor<R>): R;
 }

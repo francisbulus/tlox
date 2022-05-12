@@ -5,7 +5,11 @@ const fs = require("fs");
 const path = require("path");
 const repl = require("node:repl");
 const scanner_1 = require("./scanner");
+const token_1 = require("./token");
 const generator_1 = require("./generator");
+const expression_1 = require("./expression");
+const types_1 = require("./types");
+const printer_1 = require("./printer");
 class Interpreter {
     constructor(args) {
         this.args = args;
@@ -61,7 +65,13 @@ class Interpreter {
         this.hadError = true;
     }
 }
+const test = () => {
+    const expression = new expression_1.Binary(new expression_1.Unary(new token_1.default(types_1.TokenType.MINUS, '-', null, 1), new expression_1.Literal(123)), new token_1.default(types_1.TokenType.STAR, '*', null, 1), new expression_1.Grouping(new expression_1.Literal(45.67)));
+    const str = new printer_1.default().print(expression);
+    console.log(str);
+};
 const Lox = new Interpreter(process.argv);
 exports.Lox = Lox;
-Lox.init();
+// Lox.init();
+test();
 //# sourceMappingURL=lox.js.map

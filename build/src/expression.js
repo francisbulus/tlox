@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Unary = exports.Literal = exports.Grouping = exports.Binary = void 0;
+exports.Unary = exports.Literal = exports.Grouping = exports.Binary = exports.Expression = void 0;
 class Expression {
     constructor() { }
 }
+exports.Expression = Expression;
 class Binary extends Expression {
     constructor(left, operator, right) {
         super();
@@ -15,7 +16,7 @@ class Binary extends Expression {
         this.right = right;
     }
     accept(visitor) {
-        return visitor.visitUnary(this);
+        return visitor.visitBinary(this);
     }
 }
 exports.Binary = Binary;
@@ -25,6 +26,9 @@ class Grouping extends Expression {
         this.expression = expression;
         this.expression = expression;
     }
+    accept(visitor) {
+        return visitor.visitGrouping(this);
+    }
 }
 exports.Grouping = Grouping;
 class Literal extends Expression {
@@ -32,6 +36,9 @@ class Literal extends Expression {
         super();
         this.value = value;
         this.value = value;
+    }
+    accept(visitor) {
+        return visitor.visitLiteral(this);
     }
 }
 exports.Literal = Literal;
@@ -43,6 +50,9 @@ class Unary extends Expression {
         this.operator = operator;
         this.right = right;
     }
+    accept(visitor) {
+        return visitor.visitUnary(this);
+    }
 }
 exports.Unary = Unary;
-//# sourceMappingURL=expressioen.js.map
+//# sourceMappingURL=expression.js.map
