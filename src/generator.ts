@@ -22,7 +22,7 @@ export default class GenerateAst {
 
   private writer(content: string, path: string): void {
     fs.appendFileSync(path, content);
-    this.lint();
+    // this.lint();
   }
 
   private defineAst(baseName: string, types: string[]): void {
@@ -33,13 +33,32 @@ export default class GenerateAst {
       const baseClassContent = `
       import Token from './token'
       
-      class ${baseName}{ 
+      abstract class ${baseName}{ 
         constructor() {}
+        abstract accept<R>(visitor: ${baseName}Visitor<R>): R;
     }
         `;
       if (index === 0) this.writer(baseClassContent, this.path);
       this.defineType(baseName, className, fields);
     });
+    this.defineVisitor(baseName, types);
+  }
+
+  private defineVisitor(baseName: string, types: string[]): void {
+    const content = `
+    export interface ${baseName}Visitor<T> {
+      ${(function (): string {
+        let visits = '';
+        for (const type of types) {
+          const className = type.split('>')[0].trim();
+          visits += `visit${className}(expression: ${className}): T;
+          `;
+        }
+        return visits;
+      })()}
+    }
+    `;
+    this.writer(content, this.path);
   }
 
   private setFieldMetadata(fields: string): string {
@@ -57,6 +76,9 @@ export default class GenerateAst {
   ): void {
     const content = `
     export class ${className} extends ${baseName} {
+      accept<T>(visitor: ${baseName}Visitor<T>): T {
+        return visitor.visit${className}(this);
+      }
         constructor(${this.setFieldMetadata(fields)}) {
             super()
             ${this.generateClassTemplate(fields)}
