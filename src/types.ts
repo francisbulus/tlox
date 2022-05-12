@@ -52,10 +52,3 @@ export interface KeywordMap {
 }
 
 export type LiteralType = object | null | string | number;
-
-// export interface Generator {
-//   generate(): void;
-//   defineAst(outputDir: string, superClass: string, types: string[]): void;
-//   writer(content: string, path: string): void;
-//   defineType(baseName: string, className: string, fieldList: string): void;
-// }

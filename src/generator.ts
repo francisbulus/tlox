@@ -1,8 +1,7 @@
 import fs = require('fs');
-import path = require('path');
 import {exec} from 'child_process';
 import {promisify} from 'util';
-const __exec = promisify(exec);
+const executeAsPromise = promisify(exec);
 
 export default class GenerateAst {
   private path!: string;
@@ -16,7 +15,7 @@ export default class GenerateAst {
   }
 
   private async lint(): Promise<void> {
-    const {stdout, stderr} = await __exec('yarn run lint');
+    const {stdout, stderr} = await executeAsPromise('yarn run lint');
     console.log('stdout:', stdout);
     console.log('stderr:', stderr);
   }
