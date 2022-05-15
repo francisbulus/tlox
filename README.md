@@ -11,6 +11,7 @@ Working on this at the moment so may not be entirely clear.
 ## Chapter 5 - Parsing Expressions
 
 - Parsers are basically about mapping tokens to terminals in a grammar
+- 6/3-1 is a valid string at this stage but it could be evaluated in different ways - this could lead to problems down the line with inconsistencies across AST outputs so associativity and precedence
 - Without well-defined precedence and associativity, an expression that uses multiple operators is ambiguous—it can be parsed into different syntax trees
 
 - Some parsing techniques:
