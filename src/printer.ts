@@ -19,7 +19,7 @@ export default class AstPrinter implements ExpressionVisitor<string> {
     return this.parenthesize('group', expression.expression);
   }
   visitLiteral(expression: Literal): string {
-    if (expression.value == null) return 'nil';
+    if (expression.value === null) return 'nil';
     return expression.value.toString();
   }
   visitUnary(expression: Unary): string {
