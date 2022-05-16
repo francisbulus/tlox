@@ -59,8 +59,25 @@ class Interpreter {
     tokens.forEach((token: Token) => console.log(token));
   }
 
-  public error(line: number, msg: string): void {
-    this.report(line, '', msg);
+  public error(
+    ...args:
+      | [observable: number, message: string]
+      | [observable: Token, message: string]
+  ): void {
+    const [observable, message] = args;
+    if (observable instanceof Token) {
+      if (observable.type === TokenType.EOF) {
+        this.report(observable.line, ' at end', message);
+      } else {
+        this.report(
+          observable.line,
+          " at '" + observable.lexeme + "'",
+          message
+        );
+      }
+    } else if (typeof observable == 'number') {
+      this.report(observable, '', message);
+    }
   }
 
   private report(line: number, where: string, msg: string): void {

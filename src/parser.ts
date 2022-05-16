@@ -1,4 +1,5 @@
 import {Binary, Expression, Grouping, Literal, Unary} from './expression';
+import {Lox} from './lox';
 import Token from './token';
 import {TokenType} from './types';
 
@@ -23,7 +24,7 @@ export class Parser {
     return expr;
   }
 
-  match(...types: TokenType[]): boolean {
+  private match(...types: TokenType[]): boolean {
     for (const type of types) {
       if (this.check(type)) {
         this.advance();
@@ -53,6 +54,11 @@ export class Parser {
 
   private previous(): Token {
     return this.tokens[this.current - 1];
+  }
+
+  private error(token: Token, message: string): ParseError {
+    Lox.error(token, message);
+    return new Error('R');
   }
 
   private comparison(): Expression {
@@ -120,7 +126,10 @@ export class Parser {
     }
   }
 
-  private consume(type: TokenType, errorMsg: string) {
+  private consume(type: TokenType, message: string) {
+    if (this.check(type)) return this.advance();
     throw new Error('Method not implemented.');
   }
 }
+
+class ParseError extends Error {}

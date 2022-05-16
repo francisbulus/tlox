@@ -5,7 +5,7 @@ export default class Token {
     public type: TokenType,
     public lexeme: string,
     public literal: object | null | string | number,
-    protected line: number
+    public line: number
   ) {
     this.type = type;
     this.lexeme = lexeme;

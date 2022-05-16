@@ -68,3 +68,5 @@ Working on this at the moment so may not be entirely clear.
     - GCC, V8 (the JavaScript VM in Chrome), Roslyn (the C# compiler written in C#) and many other heavyweight production language implementations use recursive descent
 
     - Left recursion can be problematic for recursive descent because the function for a left-recursive rule immediately calls itself, which calls itself again, and so on, until the parser hits a stack overflow and dies.
+
+    - The fact that the parser looks ahead at upcoming tokens to decide how to parse puts recursive descent into the category of predictive parsers.
