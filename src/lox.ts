@@ -86,16 +86,6 @@ class Interpreter {
   }
 }
 
-const test = () => {
-  const expression = new Binary(
-    new Unary(new Token(TokenType.MINUS, '-', null, 1), new Literal(123)),
-    new Token(TokenType.STAR, '*', null, 1),
-    new Grouping(new Literal(45.67))
-  );
-  const str = new AstPrinter().print(expression);
-  console.log(str);
-};
-
 const Lox = new Interpreter(process.argv);
 export {Lox};
 Lox.init();
