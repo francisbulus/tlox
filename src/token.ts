@@ -2,9 +2,9 @@ import {TokenType} from './types';
 
 export default class Token {
   constructor(
-    protected type: TokenType,
+    public type: TokenType,
     public lexeme: string,
-    protected literal: object | null | string | number,
+    public literal: object | null | string | number,
     protected line: number
   ) {
     this.type = type;
