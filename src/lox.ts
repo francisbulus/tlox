@@ -5,6 +5,9 @@ import Scanner from './scanner';
 import Token from './token';
 import GenerateAst from './generator';
 import {TokenType} from './types';
+import {Expression} from './expression';
+import {Parser} from './parser';
+import AstPrinter from './printer';
 
 class Interpreter {
   private hadError: boolean;
@@ -55,6 +58,14 @@ class Interpreter {
     const scanner = new Scanner(source);
     const tokens = scanner.scanTokens();
     tokens.forEach((token: Token) => console.log(token));
+    // --- TEST FOR PARSER --- //
+    // const scanner = new Scanner(source);
+    // const tokens = scanner.scanTokens();
+    // const parser: Parser = new Parser(tokens);
+    // const expression: Expression = parser.parse();
+    // if (this.hadError) return;
+    // const str = new AstPrinter().print(expression);
+    // console.log(str);
   }
 
   public error(

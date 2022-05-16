@@ -8,7 +8,7 @@ class AstPrinter {
         return this.parenthesize('group', expression.expression);
     }
     visitLiteral(expression) {
-        if (expression.value == null)
+        if (expression.value === null)
             return 'nil';
         return expression.value.toString();
     }

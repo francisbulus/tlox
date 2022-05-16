@@ -4,10 +4,11 @@ import Token from './token';
 import {TokenType} from './types';
 
 export class Parser {
-  private current!: number;
+  private current: number;
 
   constructor(readonly tokens: Token[]) {
     this.tokens = tokens;
+    this.current = 0;
   }
 
   parse(): Expression {

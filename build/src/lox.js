@@ -7,9 +7,7 @@ const repl = require("node:repl");
 const scanner_1 = require("./scanner");
 const token_1 = require("./token");
 const generator_1 = require("./generator");
-const expression_1 = require("./expression");
 const types_1 = require("./types");
-const printer_1 = require("./printer");
 class Interpreter {
     constructor(args) {
         this.args = args;
@@ -56,22 +54,35 @@ class Interpreter {
         const scanner = new scanner_1.default(source);
         const tokens = scanner.scanTokens();
         tokens.forEach((token) => console.log(token));
+        // --- TEST FOR PARSER --- //
+        // const scanner = new Scanner(source);
+        // const tokens = scanner.scanTokens();
+        // const parser: Parser = new Parser(tokens);
+        // const expression: Expression = parser.parse();
+        // if (this.hadError) return;
+        // const str = new AstPrinter().print(expression);
+        // console.log(str);
     }
-    error(line, msg) {
-        this.report(line, '', msg);
+    error(...args) {
+        const [observable, msg] = args;
+        if (observable instanceof token_1.default) {
+            if (observable.type === types_1.TokenType.EOF) {
+                this.report(observable.line, ' at end', msg);
+            }
+            else {
+                this.report(observable.line, " at '" + observable.lexeme + "'", msg);
+            }
+        }
+        else if (typeof observable === 'number') {
+            this.report(observable, '', msg);
+        }
     }
     report(line, where, msg) {
         console.error('[line ' + line + '] Error' + where + ': ' + msg);
         this.hadError = true;
     }
 }
-const test = () => {
-    const expression = new expression_1.Binary(new expression_1.Unary(new token_1.default(types_1.TokenType.MINUS, '-', null, 1), new expression_1.Literal(123)), new token_1.default(types_1.TokenType.STAR, '*', null, 1), new expression_1.Grouping(new expression_1.Literal(45.67)));
-    const str = new printer_1.default().print(expression);
-    console.log(str);
-};
 const Lox = new Interpreter(process.argv);
 exports.Lox = Lox;
-// Lox.init();
-test();
+Lox.init();
 //# sourceMappingURL=lox.js.map

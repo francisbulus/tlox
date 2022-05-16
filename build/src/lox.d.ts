@@ -1,3 +1,4 @@
+import Token from './token';
 declare class Interpreter {
     private args;
     private hadError;
@@ -6,7 +7,7 @@ declare class Interpreter {
     private runFile;
     private runPrompt;
     private run;
-    error(line: number, msg: string): void;
+    error(...args: [observable: number, msg: string] | [observable: Token, msg: string]): void;
     private report;
 }
 declare const Lox: Interpreter;

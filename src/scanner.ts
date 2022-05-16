@@ -30,60 +30,56 @@ export default class Scanner {
     const c = this.advance();
     switch (c) {
       case '(':
-        this.addToken({type: TokenType.LEFT_PAREN});
+        this.addToken(TokenType.LEFT_PAREN);
         break;
       case ')':
-        this.addToken({type: TokenType.RIGHT_PAREN});
+        this.addToken(TokenType.RIGHT_PAREN);
         break;
       case '{':
-        this.addToken({type: TokenType.LEFT_BRACE});
+        this.addToken(TokenType.LEFT_BRACE);
         break;
       case '}':
-        this.addToken({type: TokenType.RIGHT_BRACE});
+        this.addToken(TokenType.RIGHT_BRACE);
         break;
       case ',':
-        this.addToken({type: TokenType.COMMA});
+        this.addToken(TokenType.COMMA);
         break;
       case '.':
-        this.addToken({type: TokenType.DOT});
+        this.addToken(TokenType.DOT);
         break;
       case '-':
-        this.addToken({type: TokenType.MINUS});
+        this.addToken(TokenType.MINUS);
         break;
       case '+':
-        this.addToken({type: TokenType.PLUS});
+        this.addToken(TokenType.PLUS);
         break;
       case ';':
-        this.addToken({type: TokenType.SEMICOLON});
+        this.addToken(TokenType.SEMICOLON);
         break;
       case '*':
-        this.addToken({type: TokenType.STAR});
+        this.addToken(TokenType.STAR);
         break;
       case '!':
-        this.addToken({
-          type: this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG,
-        });
+        this.addToken(this.match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
         break;
       case '=':
-        this.addToken({
-          type: this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL,
-        });
+        this.addToken(
+          this.match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL
+        );
         break;
       case '<':
-        this.addToken({
-          type: this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS,
-        });
+        this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
         break;
       case '>':
-        this.addToken({
-          type: this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER,
-        });
+        this.addToken(
+          this.match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER
+        );
         break;
       case '/':
         if (this.match('/')) {
           while (this.peek() !== '\n' && !this.isAtEnd()) this.advance();
         } else {
-          this.addToken({type: TokenType.SLASH});
+          this.addToken(TokenType.SLASH);
         }
         break;
       case ' ':
@@ -113,7 +109,7 @@ export default class Scanner {
     const text = this.source.substring(this.start, this.current);
     let type = KEYWORDS[text];
     if (type === undefined) type = TokenType.IDENTIFIER;
-    this.addToken({type});
+    this.addToken(type);
   }
 
   private number(): void {
@@ -122,10 +118,10 @@ export default class Scanner {
       this.advance();
       while (this.isDigit(this.peek())) this.advance();
     }
-    this.addToken({
-      type: TokenType.NUMBER,
-      literal: parseFloat(this.source.substring(this.start, this.current)),
-    });
+    this.addToken(
+      TokenType.NUMBER,
+      parseFloat(this.source.substring(this.start, this.current))
+    );
   }
 
   private string(): void {
@@ -141,7 +137,7 @@ export default class Scanner {
 
     this.advance();
     const value = this.source.substring(this.start + 1, this.current - 1);
-    this.addToken({type: TokenType.STRING, literal: value});
+    this.addToken(TokenType.STRING, value);
   }
 
   private isAtEnd(): boolean {
@@ -181,16 +177,15 @@ export default class Scanner {
     return this.source.charAt(this.current++);
   }
 
-  private addToken({
-    type,
-    literal,
-  }: {
-    type: TokenType;
-    literal?: LiteralType;
-  }): void {
-    if (literal !== undefined) {
+  private addToken(
+    ...args: [type: TokenType] | [type: TokenType, literal: LiteralType]
+  ): void {
+    const [type, literal] = args;
+    if (typeof literal === 'undefined') {
+      this.addToken(type, null);
+    } else {
       const text = this.source.substring(this.start, this.current);
       this.tokens.push(new Token(type, text, literal, this.line));
-    } else this.addToken({type, literal: null});
+    }
   }
 }
