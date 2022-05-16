@@ -4,9 +4,7 @@ import repl = require('node:repl');
 import Scanner from './scanner';
 import Token from './token';
 import GenerateAst from './generator';
-import {Binary, Expression, Grouping, Literal, Unary} from './expression';
 import {TokenType} from './types';
-import AstPrinter from './printer';
 
 class Interpreter {
   private hadError: boolean;
@@ -61,22 +59,18 @@ class Interpreter {
 
   public error(
     ...args:
-      | [observable: number, message: string]
-      | [observable: Token, message: string]
+      | [observable: number, msg: string]
+      | [observable: Token, msg: string]
   ): void {
-    const [observable, message] = args;
+    const [observable, msg] = args;
     if (observable instanceof Token) {
       if (observable.type === TokenType.EOF) {
-        this.report(observable.line, ' at end', message);
+        this.report(observable.line, ' at end', msg);
       } else {
-        this.report(
-          observable.line,
-          " at '" + observable.lexeme + "'",
-          message
-        );
+        this.report(observable.line, " at '" + observable.lexeme + "'", msg);
       }
-    } else if (typeof observable == 'number') {
-      this.report(observable, '', message);
+    } else if (typeof observable === 'number') {
+      this.report(observable, '', msg);
     }
   }
 

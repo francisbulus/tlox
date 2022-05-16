@@ -10,6 +10,14 @@ export class Parser {
     this.tokens = tokens;
   }
 
+  parse(): Expression {
+    try {
+      return this.expression();
+    } catch (err) {
+      return null as never;
+    }
+  }
+
   private expression(): Expression {
     return this.equality();
   }
@@ -32,6 +40,11 @@ export class Parser {
       }
     }
     return false;
+  }
+
+  private consume(type: TokenType, message: string): Token {
+    if (this.check(type)) return this.advance();
+    throw this.error(this.peek(), message);
   }
 
   private check(type: TokenType) {
@@ -58,7 +71,27 @@ export class Parser {
 
   private error(token: Token, message: string): ParseError {
     Lox.error(token, message);
-    return new Error('R');
+    return new ParseError();
+  }
+
+  private synchronize(): void {
+    this.advance();
+    while (!this.isAtEnd()) {
+      if (this.previous().type == TokenType.SEMICOLON) return;
+      switch (this.peek().type) {
+        case TokenType.CLASS:
+        case TokenType.FUN:
+        case TokenType.VAR:
+        case TokenType.FOR:
+        case TokenType.IF:
+        case TokenType.WHILE:
+        case TokenType.PRINT:
+        case TokenType.RETURN:
+          return;
+      }
+
+      this.advance();
+    }
   }
 
   private comparison(): Expression {
@@ -122,13 +155,8 @@ export class Parser {
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return new Grouping(expr);
     } else {
-      throw new Error('Rejected primary.'); // TODO
+      throw this.error(this.peek(), 'Expect expression.');
     }
-  }
-
-  private consume(type: TokenType, message: string) {
-    if (this.check(type)) return this.advance();
-    throw new Error('Method not implemented.');
   }
 }
 
