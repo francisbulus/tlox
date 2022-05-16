@@ -116,7 +116,7 @@ export class Parser {
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return new Grouping(expr);
     } else {
-      throw new Error('Rejected primary.');
+      throw new Error('Rejected primary.'); // TODO
     }
   }
 
