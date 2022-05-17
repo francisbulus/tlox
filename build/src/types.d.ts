@@ -42,4 +42,4 @@ export declare enum TokenType {
 export interface KeywordMap {
     readonly [identifier: string]: TokenType;
 }
-export declare type LiteralType = object | null | string | number;
+export declare type LiteralType = any;

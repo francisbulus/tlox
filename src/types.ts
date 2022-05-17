@@ -51,4 +51,4 @@ export interface KeywordMap {
   readonly [identifier: string]: TokenType;
 }
 
-export type LiteralType = object | null | string | number;
+export type LiteralType = any;
