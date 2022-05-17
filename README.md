@@ -1,6 +1,6 @@
 ## WIP
 
-Working on this at the moment so may not be entirely clear.
+Working on this at the moment, as I get through the book, so the feature set is still evolving. I keep these notes at the root level to lure myself into scanning them whenever I open this repo.
 
 # Design Notes
 
