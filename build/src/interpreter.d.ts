@@ -1,10 +1,11 @@
 import { Binary, ExpressionVisitor, Grouping, Literal, Unary } from './expression';
 import { LiteralType } from './types';
 export declare class Interpreter implements ExpressionVisitor<LiteralType> {
-    visitBinary(expression: Binary): string | number | null;
     visitGrouping(expression: Grouping): LiteralType;
-    visitLiteral(expression: Literal): LiteralType;
+    private evaluate;
+    visitBinary(expression: Binary): string | number | boolean | null;
+    visitLiteral(expression: Literal): any;
     visitUnary(expression: Unary): number | boolean | null;
     private isTruthy;
-    private evaluate;
+    private isEqual;
 }
