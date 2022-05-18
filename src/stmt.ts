@@ -1,5 +1,5 @@
 import {Expression} from './expression';
-
+import Token from './token';
 export abstract class Stmt {
   constructor() {}
   abstract accept<R>(visitor: StmtVisitor<R>): R;
@@ -23,7 +23,18 @@ export class PrintStmt extends Stmt {
     this.expression = expression;
   }
 }
+export class VarStmt extends Stmt {
+  accept<T>(visitor: StmtVisitor<T>): T {
+    return visitor.visitVarStmt(this);
+  }
+  constructor(readonly name: Token, readonly initializer: Expression) {
+    super();
+    this.name = name;
+    this.initializer = initializer;
+  }
+}
 export interface StmtVisitor<T> {
   visitExpressionStmt(expression: ExpressionStmt): T;
   visitPrintStmt(expression: PrintStmt): T;
+  visitVarStmt(expression: VarStmt): T;
 }

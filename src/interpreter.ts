@@ -6,15 +6,22 @@ import {
   GroupingExpression,
   LiteralExpression,
   UnaryExpression,
+  VariableExpression,
 } from './expression';
 import Lox from './lox';
-import {ExpressionStmt, PrintStmt, Stmt, StmtVisitor} from './stmt';
+import {ExpressionStmt, PrintStmt, Stmt, StmtVisitor, VarStmt} from './stmt';
 import Token from './token';
 import {LiteralType, TokenType} from './types';
 
 export class Interpreter
   implements ExpressionVisitor<LiteralType>, StmtVisitor<void>
 {
+  visitVariableExpression(expression: VariableExpression) {
+    throw new Error('Method not implemented.');
+  }
+  visitVarStmt(expression: VarStmt): void {
+    throw new Error('Method not implemented.');
+  }
   interpret(statements: Stmt[]): void {
     try {
       for (const statement of statements) {

@@ -11,11 +11,13 @@ export default class GenerateAst {
       'Grouping > expression: Expression',
       'Literal  > value: any',
       'Unary    > operator: Token, right: Expression',
+      'Variable > name: Token',
     ]);
 
     this.defineAst('Stmt', [
       'Expression   > expression: Expression',
       'Print > expression: Expression',
+      'Var > name: Token, initializer: Expression',
     ]);
   }
 
@@ -36,9 +38,12 @@ export default class GenerateAst {
       const className = type.split('>')[0].trim();
       const fields = type.split('>')[1].trim();
       const baseClassContent = `
-      import Token from './token'
-      
-      abstract class ${baseName}{ 
+      ${
+        baseName !== 'Stmt'
+          ? `import Token from './token'`
+          : `import {Expression} from './expression';`
+      }
+      export abstract class ${baseName}{ 
         constructor() {}
         abstract accept<R>(visitor: ${baseName}Visitor<R>): R;
     }

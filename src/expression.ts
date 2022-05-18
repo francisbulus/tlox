@@ -1,5 +1,4 @@
 import Token from './token';
-
 export abstract class Expression {
   constructor() {}
   abstract accept<R>(visitor: ExpressionVisitor<R>): R;
@@ -48,9 +47,19 @@ export class UnaryExpression extends Expression {
     this.right = right;
   }
 }
+export class VariableExpression extends Expression {
+  accept<T>(visitor: ExpressionVisitor<T>): T {
+    return visitor.visitVariableExpression(this);
+  }
+  constructor(readonly name: Token) {
+    super();
+    this.name = name;
+  }
+}
 export interface ExpressionVisitor<T> {
   visitBinaryExpression(expression: BinaryExpression): T;
   visitGroupingExpression(expression: GroupingExpression): T;
   visitLiteralExpression(expression: LiteralExpression): T;
   visitUnaryExpression(expression: UnaryExpression): T;
+  visitVariableExpression(expression: VariableExpression): T;
 }

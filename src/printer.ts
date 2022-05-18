@@ -5,9 +5,13 @@ import {
   LiteralExpression,
   UnaryExpression,
   Expression,
+  VariableExpression,
 } from './expression';
 
 export default class AstPrinter implements ExpressionVisitor<string> {
+  visitVariableExpression(expression: VariableExpression): string {
+    throw new Error('Method not implemented.');
+  }
   visitBinaryExpression(expression: BinaryExpression): string {
     return this.parenthesize(
       expression.operator.lexeme,

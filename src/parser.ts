@@ -4,9 +4,10 @@ import {
   GroupingExpression,
   LiteralExpression,
   UnaryExpression,
+  VariableExpression,
 } from './expression';
 import Lox from './lox';
-import {ExpressionStmt, PrintStmt, Stmt} from './stmt';
+import {ExpressionStmt, PrintStmt, Stmt, VarStmt} from './stmt';
 import Token from './token';
 import {TokenType} from './types';
 
@@ -21,7 +22,7 @@ export class Parser {
   parse(): Stmt[] {
     let statements = [];
     while (!this.isAtEnd()) {
-      statements.push(this.statement());
+      statements.push(this.declaration());
     }
     return statements;
   }
@@ -37,6 +38,16 @@ export class Parser {
     return new PrintStmt(value);
   }
 
+  private varDeclaration(): Stmt {
+    const name = this.consume(TokenType.IDENTIFIER, 'Expect variable name.');
+    let initializer: any = null;
+    if (this.match(TokenType.EQUAL)) {
+      initializer = this.expression();
+    }
+    this.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+    return new VarStmt(name, initializer);
+  }
+
   private expressionStatement(): Stmt {
     const expr = this.expression();
     this.consume(TokenType.SEMICOLON, "Expect ';' after expression.");
@@ -45,6 +56,16 @@ export class Parser {
 
   private expression(): Expression {
     return this.equality();
+  }
+
+  private declaration(): Stmt {
+    try {
+      if (this.match(TokenType.VAR)) return this.varDeclaration();
+      return this.statement();
+    } catch (error) {
+      this.synchronize();
+      return null as never;
+    }
   }
 
   private equality(): Expression {
@@ -96,7 +117,7 @@ export class Parser {
 
   private error(token: Token, message: string): ParseError {
     Lox.error(token, message);
-    return new ParseError();
+    return new ParseError(message);
   }
 
   private synchronize(): void {
@@ -171,18 +192,26 @@ export class Parser {
 
   private primary(): Expression {
     if (this.match(TokenType.FALSE)) return new LiteralExpression(false);
-    else if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
-    else if (this.match(TokenType.NIL)) return new LiteralExpression(null);
-    else if (this.match(TokenType.NUMBER, TokenType.STRING)) {
+    if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
+    if (this.match(TokenType.NIL)) return new LiteralExpression(null);
+    if (this.match(TokenType.NUMBER, TokenType.STRING)) {
       return new LiteralExpression(this.previous().literal);
-    } else if (this.match(TokenType.LEFT_PAREN)) {
+    }
+    if (this.match(TokenType.IDENTIFIER)) {
+      return new VariableExpression(this.previous());
+    }
+
+    if (this.match(TokenType.LEFT_PAREN)) {
       const expr = this.expression();
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
       return new GroupingExpression(expr);
-    } else {
-      throw this.error(this.peek(), 'Expect expression.');
     }
+    throw this.error(this.peek(), 'Expect expression.');
   }
 }
 
-class ParseError extends Error {}
+class ParseError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
