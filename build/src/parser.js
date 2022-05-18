@@ -26,7 +26,7 @@ class Parser {
         while (this.match(types_1.TokenType.BANG_EQUAL, types_1.TokenType.EQUAL_EQUAL)) {
             let operator = this.previous();
             let right = this.comparison();
-            expr = new expression_1.Binary(expr, operator, right);
+            expr = new expression_1.BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -91,7 +91,7 @@ class Parser {
         while (this.match(types_1.TokenType.GREATER, types_1.TokenType.GREATER_EQUAL, types_1.TokenType.LESS, types_1.TokenType.LESS_EQUAL)) {
             const operator = this.previous();
             const right = this.term();
-            expr = new expression_1.Binary(expr, operator, right);
+            expr = new expression_1.BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -100,7 +100,7 @@ class Parser {
         while (this.match(types_1.TokenType.MINUS, types_1.TokenType.PLUS)) {
             const operator = this.previous();
             const right = this.factor();
-            expr = new expression_1.Binary(expr, operator, right);
+            expr = new expression_1.BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -109,7 +109,7 @@ class Parser {
         while (this.match(types_1.TokenType.SLASH, types_1.TokenType.STAR)) {
             const operator = this.previous();
             const right = this.unary();
-            expr = new expression_1.Binary(expr, operator, right);
+            expr = new expression_1.BinaryExpression(expr, operator, right);
         }
         return expr;
     }
@@ -117,24 +117,24 @@ class Parser {
         if (this.match(types_1.TokenType.BANG, types_1.TokenType.MINUS)) {
             const operator = this.previous();
             const right = this.unary();
-            return new expression_1.Unary(operator, right);
+            return new expression_1.UnaryExpression(operator, right);
         }
         return this.primary();
     }
     primary() {
         if (this.match(types_1.TokenType.FALSE))
-            return new expression_1.Literal(false);
+            return new expression_1.LiteralExpression(false);
         else if (this.match(types_1.TokenType.TRUE))
-            return new expression_1.Literal(true);
+            return new expression_1.LiteralExpression(true);
         else if (this.match(types_1.TokenType.NIL))
-            return new expression_1.Literal(null);
+            return new expression_1.LiteralExpression(null);
         else if (this.match(types_1.TokenType.NUMBER, types_1.TokenType.STRING)) {
-            return new expression_1.Literal(this.previous().literal);
+            return new expression_1.LiteralExpression(this.previous().literal);
         }
         else if (this.match(types_1.TokenType.LEFT_PAREN)) {
             const expr = this.expression();
             this.consume(types_1.TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-            return new expression_1.Grouping(expr);
+            return new expression_1.GroupingExpression(expr);
         }
         else {
             throw this.error(this.peek(), 'Expect expression.');

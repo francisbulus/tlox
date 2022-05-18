@@ -1,20 +1,22 @@
+import {Expression} from './expression';
+
 abstract class Stmt {
   constructor() {}
   abstract accept<R>(visitor: StmtVisitor<R>): R;
 }
 
-export class Expression extends Stmt {
+export class ExpressionStmt extends Stmt {
   accept<T>(visitor: StmtVisitor<T>): T {
-    return visitor.visitExpression(this);
+    return visitor.visitExpressionStmt(this);
   }
   constructor(readonly expression: Expression) {
     super();
     this.expression = expression;
   }
 }
-export class Print extends Stmt {
+export class PrintStmt extends Stmt {
   accept<T>(visitor: StmtVisitor<T>): T {
-    return visitor.visitPrint(this);
+    return visitor.visitPrintStmt(this);
   }
   constructor(readonly expression: Expression) {
     super();
@@ -22,6 +24,6 @@ export class Print extends Stmt {
   }
 }
 export interface StmtVisitor<T> {
-  visitExpression(expression: Expression): T;
-  visitPrint(expression: Print): T;
+  visitExpressionStmt(expression: ExpressionStmt): T;
+  visitPrintStmt(expression: PrintStmt): T;
 }

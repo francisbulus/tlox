@@ -1,11 +1,11 @@
 import RuntimeError from './error';
 import {
-  Binary,
+  BinaryExpression,
   Expression,
   ExpressionVisitor,
-  Grouping,
-  Literal,
-  Unary,
+  GroupingExpression,
+  LiteralExpression,
+  UnaryExpression,
 } from './expression';
 import Lox from './lox';
 import Token from './token';
@@ -21,7 +21,7 @@ export class Interpreter implements ExpressionVisitor<LiteralType> {
     }
   }
 
-  visitGrouping(expression: Grouping): LiteralType {
+  visitGroupingExpression(expression: GroupingExpression): LiteralType {
     return this.evaluate(expression);
   }
 
@@ -29,7 +29,7 @@ export class Interpreter implements ExpressionVisitor<LiteralType> {
     return expression.accept(this);
   }
 
-  visitBinary(expression: Binary) {
+  visitBinaryExpression(expression: BinaryExpression) {
     const left: any = this.evaluate(expression.left);
     const right: any = this.evaluate(expression.right);
     switch (expression.operator.type) {
@@ -70,11 +70,11 @@ export class Interpreter implements ExpressionVisitor<LiteralType> {
     }
     return null;
   }
-  visitLiteral(expression: Literal): any {
+  visitLiteralExpression(expression: LiteralExpression): any {
     return expression.value;
   }
 
-  visitUnary(expression: Unary) {
+  visitUnaryExpression(expression: UnaryExpression) {
     const right: string = this.evaluate(expression.right);
     switch (expression.operator.type) {
       case TokenType.BANG:

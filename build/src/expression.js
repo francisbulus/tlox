@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Unary = exports.Literal = exports.Grouping = exports.Binary = exports.Expression = void 0;
+exports.UnaryExpression = exports.LiteralExpression = exports.GroupingExpression = exports.BinaryExpression = exports.Expression = void 0;
 class Expression {
     constructor() { }
 }
 exports.Expression = Expression;
-class Binary extends Expression {
+class BinaryExpression extends Expression {
     constructor(left, operator, right) {
         super();
         this.left = left;
@@ -16,33 +16,33 @@ class Binary extends Expression {
         this.right = right;
     }
     accept(visitor) {
-        return visitor.visitBinary(this);
+        return visitor.visitBinaryExpression(this);
     }
 }
-exports.Binary = Binary;
-class Grouping extends Expression {
+exports.BinaryExpression = BinaryExpression;
+class GroupingExpression extends Expression {
     constructor(expression) {
         super();
         this.expression = expression;
         this.expression = expression;
     }
     accept(visitor) {
-        return visitor.visitGrouping(this);
+        return visitor.visitGroupingExpression(this);
     }
 }
-exports.Grouping = Grouping;
-class Literal extends Expression {
+exports.GroupingExpression = GroupingExpression;
+class LiteralExpression extends Expression {
     constructor(value) {
         super();
         this.value = value;
         this.value = value;
     }
     accept(visitor) {
-        return visitor.visitLiteral(this);
+        return visitor.visitLiteralExpression(this);
     }
 }
-exports.Literal = Literal;
-class Unary extends Expression {
+exports.LiteralExpression = LiteralExpression;
+class UnaryExpression extends Expression {
     constructor(operator, right) {
         super();
         this.operator = operator;
@@ -51,8 +51,8 @@ class Unary extends Expression {
         this.right = right;
     }
     accept(visitor) {
-        return visitor.visitUnary(this);
+        return visitor.visitUnaryExpression(this);
     }
 }
-exports.Unary = Unary;
+exports.UnaryExpression = UnaryExpression;
 //# sourceMappingURL=expression.js.map

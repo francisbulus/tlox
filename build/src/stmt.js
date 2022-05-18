@@ -1,29 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Print = exports.Expression = void 0;
+exports.PrintStmt = exports.ExpressionStmt = void 0;
 class Stmt {
     constructor() { }
 }
-class Expression extends Stmt {
+class ExpressionStmt extends Stmt {
     constructor(expression) {
         super();
         this.expression = expression;
         this.expression = expression;
     }
     accept(visitor) {
-        return visitor.visitExpression(this);
+        return visitor.visitExpressionStmt(this);
     }
 }
-exports.Expression = Expression;
-class Print extends Stmt {
+exports.ExpressionStmt = ExpressionStmt;
+class PrintStmt extends Stmt {
     constructor(expression) {
         super();
         this.expression = expression;
         this.expression = expression;
     }
     accept(visitor) {
-        return visitor.visitPrint(this);
+        return visitor.visitPrintStmt(this);
     }
 }
-exports.Print = Print;
+exports.PrintStmt = PrintStmt;
 //# sourceMappingURL=stmt.js.map

@@ -1,28 +1,28 @@
 import {
-  Binary,
+  BinaryExpression,
   ExpressionVisitor,
-  Grouping,
-  Literal,
-  Unary,
+  GroupingExpression,
+  LiteralExpression,
+  UnaryExpression,
   Expression,
 } from './expression';
 
 export default class AstPrinter implements ExpressionVisitor<string> {
-  visitBinary(expression: Binary): string {
+  visitBinaryExpression(expression: BinaryExpression): string {
     return this.parenthesize(
       expression.operator.lexeme,
       expression.left,
       expression.right
     );
   }
-  visitGrouping(expression: Grouping): string {
+  visitGroupingExpression(expression: GroupingExpression): string {
     return this.parenthesize('group', expression.expression);
   }
-  visitLiteral(expression: Literal): string {
+  visitLiteralExpression(expression: LiteralExpression): string {
     if (expression.value === null) return 'nil';
     return expression.value.toString();
   }
-  visitUnary(expression: Unary): string {
+  visitUnaryExpression(expression: UnaryExpression): string {
     return this.parenthesize(expression.operator.lexeme, expression.right);
   }
   parenthesize(name: string, ...expressions: Expression[]): string {

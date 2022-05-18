@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class AstPrinter {
-    visitBinary(expression) {
+    visitBinaryExpression(expression) {
         return this.parenthesize(expression.operator.lexeme, expression.left, expression.right);
     }
-    visitGrouping(expression) {
+    visitGroupingExpression(expression) {
         return this.parenthesize('group', expression.expression);
     }
-    visitLiteral(expression) {
+    visitLiteralExpression(expression) {
         if (expression.value === null)
             return 'nil';
         return expression.value.toString();
     }
-    visitUnary(expression) {
+    visitUnaryExpression(expression) {
         return this.parenthesize(expression.operator.lexeme, expression.right);
     }
     parenthesize(name, ...expressions) {

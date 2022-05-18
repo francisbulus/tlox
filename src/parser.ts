@@ -1,4 +1,10 @@
-import {Binary, Expression, Grouping, Literal, Unary} from './expression';
+import {
+  BinaryExpression,
+  Expression,
+  GroupingExpression,
+  LiteralExpression,
+  UnaryExpression,
+} from './expression';
 import Lox from './lox';
 import Token from './token';
 import {TokenType} from './types';
@@ -28,7 +34,7 @@ export class Parser {
     while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
       let operator = this.previous();
       let right = this.comparison();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpression(expr, operator, right);
     }
     return expr;
   }
@@ -108,7 +114,7 @@ export class Parser {
     ) {
       const operator = this.previous();
       const right = this.term();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpression(expr, operator, right);
     }
     return expr;
   }
@@ -118,7 +124,7 @@ export class Parser {
     while (this.match(TokenType.MINUS, TokenType.PLUS)) {
       const operator = this.previous();
       const right = this.factor();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpression(expr, operator, right);
     }
     return expr;
   }
@@ -129,7 +135,7 @@ export class Parser {
     while (this.match(TokenType.SLASH, TokenType.STAR)) {
       const operator = this.previous();
       const right = this.unary();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpression(expr, operator, right);
     }
 
     return expr;
@@ -139,22 +145,22 @@ export class Parser {
     if (this.match(TokenType.BANG, TokenType.MINUS)) {
       const operator = this.previous();
       const right = this.unary();
-      return new Unary(operator, right);
+      return new UnaryExpression(operator, right);
     }
 
     return this.primary();
   }
 
   private primary(): Expression {
-    if (this.match(TokenType.FALSE)) return new Literal(false);
-    else if (this.match(TokenType.TRUE)) return new Literal(true);
-    else if (this.match(TokenType.NIL)) return new Literal(null);
+    if (this.match(TokenType.FALSE)) return new LiteralExpression(false);
+    else if (this.match(TokenType.TRUE)) return new LiteralExpression(true);
+    else if (this.match(TokenType.NIL)) return new LiteralExpression(null);
     else if (this.match(TokenType.NUMBER, TokenType.STRING)) {
-      return new Literal(this.previous().literal);
+      return new LiteralExpression(this.previous().literal);
     } else if (this.match(TokenType.LEFT_PAREN)) {
       const expr = this.expression();
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-      return new Grouping(expr);
+      return new GroupingExpression(expr);
     } else {
       throw this.error(this.peek(), 'Expect expression.');
     }

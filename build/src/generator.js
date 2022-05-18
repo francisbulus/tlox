@@ -52,7 +52,7 @@ class GenerateAst {
             let visits = '';
             for (const type of types) {
                 const className = type.split('>')[0].trim();
-                visits += `visit${className}(expression: ${className}): T;
+                visits += `visit${className}${baseName}(expression: ${className}${baseName}): T;
           `;
             }
             return visits;
@@ -70,9 +70,9 @@ class GenerateAst {
     }
     defineType(baseName, className, fields) {
         const content = `
-    export class ${className} extends ${baseName} {
+    export class ${className}${baseName} extends ${baseName} {
       accept<T>(visitor: ${baseName}Visitor<T>): T {
-        return visitor.visit${className}(this);
+        return visitor.visit${className}${baseName}(this);
       }
         constructor(${this.setFieldMetadata(fields)}) {
             super()

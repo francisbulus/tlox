@@ -14,13 +14,13 @@ class Interpreter {
             lox_1.default.runtimeError(error);
         }
     }
-    visitGrouping(expression) {
+    visitGroupingExpression(expression) {
         return this.evaluate(expression);
     }
     evaluate(expression) {
         return expression.accept(this);
     }
-    visitBinary(expression) {
+    visitBinaryExpression(expression) {
         const left = this.evaluate(expression.left);
         const right = this.evaluate(expression.right);
         switch (expression.operator.type) {
@@ -58,10 +58,10 @@ class Interpreter {
         }
         return null;
     }
-    visitLiteral(expression) {
+    visitLiteralExpression(expression) {
         return expression.value;
     }
-    visitUnary(expression) {
+    visitUnaryExpression(expression) {
         const right = this.evaluate(expression.right);
         switch (expression.operator.type) {
             case types_1.TokenType.BANG:
