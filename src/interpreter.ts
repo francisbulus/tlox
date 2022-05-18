@@ -15,7 +15,7 @@ import {LiteralType, TokenType} from './types';
 export class Interpreter
   implements ExpressionVisitor<LiteralType>, StmtVisitor<void>
 {
-  interpret(statements: Stmt[]) {
+  interpret(statements: Stmt[]): void {
     try {
       for (const statement of statements) {
         this.execute(statement);
