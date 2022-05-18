@@ -90,14 +90,14 @@ class Interpreter {
         return true;
     }
     isEqual(a, b) {
-        if (a == null && b == null)
+        if (a === null && b === null)
             return true;
-        if (a == null)
+        if (a === null)
             return false;
         return a === b;
     }
     stringify(object) {
-        if (object == null)
+        if (object === null)
             return 'nil';
         if (typeof object === 'number') {
             let text = object.toString();

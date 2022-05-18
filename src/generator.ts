@@ -12,6 +12,11 @@ export default class GenerateAst {
       'Literal  > value: any',
       'Unary    > operator: Token, right: Expression',
     ]);
+
+    this.defineAst('Stmt', [
+      'Expression   > expression: Expression',
+      'Print > expression: Expression',
+    ]);
   }
 
   private async lint(): Promise<void> {

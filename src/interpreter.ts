@@ -103,13 +103,13 @@ export class Interpreter implements ExpressionVisitor<LiteralType> {
   }
 
   private isEqual(a: any, b: any): boolean {
-    if (a == null && b == null) return true;
-    if (a == null) return false;
+    if (a === null && b === null) return true;
+    if (a === null) return false;
     return a === b;
   }
 
   private stringify(object: any) {
-    if (object == null) return 'nil';
+    if (object === null) return 'nil';
 
     if (typeof object === 'number') {
       let text = object.toString();
