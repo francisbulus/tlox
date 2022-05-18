@@ -56,10 +56,10 @@ class Lox {
         const scanner = new scanner_1.default(source);
         const tokens = scanner.scanTokens();
         const parser = new parser_1.Parser(tokens);
-        const expression = parser.parse();
+        const statements = parser.parse();
         if (Lox.hadError)
             return;
-        Lox.interpreter.interpret(expression);
+        Lox.interpreter.interpret(statements);
     }
     error(...args) {
         const [observable, msg] = args;

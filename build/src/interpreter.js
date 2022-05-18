@@ -5,10 +5,11 @@ const error_1 = require("./error");
 const lox_1 = require("./lox");
 const types_1 = require("./types");
 class Interpreter {
-    interpret(expression) {
+    interpret(statements) {
         try {
-            const value = this.evaluate(expression);
-            console.log(this.stringify(value));
+            for (const statement of statements) {
+                this.execute(statement);
+            }
         }
         catch (error) {
             lox_1.default.runtimeError(error);
@@ -19,6 +20,16 @@ class Interpreter {
     }
     evaluate(expression) {
         return expression.accept(this);
+    }
+    execute(statement) {
+        statement.accept(this);
+    }
+    visitExpressionStmt(statement) {
+        this.evaluate(statement.expression);
+    }
+    visitPrintStmt(statement) {
+        const value = this.evaluate(statement.expression);
+        console.log(this.stringify(value));
     }
     visitBinaryExpression(expression) {
         const left = this.evaluate(expression.left);

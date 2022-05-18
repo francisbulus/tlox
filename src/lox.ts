@@ -7,8 +7,8 @@ import GenerateAst from './generator';
 import {TokenType} from './types';
 import RuntimeError from './error';
 import {Interpreter} from './interpreter';
-import {Expression} from './expression';
 import {Parser} from './parser';
+import {Stmt} from './stmt';
 
 class Lox {
   static hadError: boolean = false;
@@ -60,9 +60,9 @@ class Lox {
     const scanner = new Scanner(source);
     const tokens = scanner.scanTokens();
     const parser: Parser = new Parser(tokens);
-    const expression: Expression = parser.parse();
+    const statements: Stmt[] = parser.parse();
     if (Lox.hadError) return;
-    Lox.interpreter.interpret(expression);
+    Lox.interpreter.interpret(statements);
   }
 
   public error(

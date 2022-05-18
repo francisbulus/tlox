@@ -1,6 +1,6 @@
 import {Expression} from './expression';
 
-abstract class Stmt {
+export abstract class Stmt {
   constructor() {}
   abstract accept<R>(visitor: StmtVisitor<R>): R;
 }

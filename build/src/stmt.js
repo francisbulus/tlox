@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrintStmt = exports.ExpressionStmt = void 0;
+exports.PrintStmt = exports.ExpressionStmt = exports.Stmt = void 0;
 class Stmt {
     constructor() { }
 }
+exports.Stmt = Stmt;
 class ExpressionStmt extends Stmt {
     constructor(expression) {
         super();

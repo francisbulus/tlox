@@ -8,14 +8,18 @@ import {
   UnaryExpression,
 } from './expression';
 import Lox from './lox';
+import {ExpressionStmt, PrintStmt, Stmt, StmtVisitor} from './stmt';
 import Token from './token';
 import {LiteralType, TokenType} from './types';
 
-export class Interpreter implements ExpressionVisitor<LiteralType> {
-  interpret(expression: Expression) {
+export class Interpreter
+  implements ExpressionVisitor<LiteralType>, StmtVisitor<void>
+{
+  interpret(statements: Stmt[]) {
     try {
-      const value = this.evaluate(expression);
-      console.log(this.stringify(value));
+      for (const statement of statements) {
+        this.execute(statement);
+      }
     } catch (error) {
       Lox.runtimeError(error as RuntimeError);
     }
@@ -27,6 +31,18 @@ export class Interpreter implements ExpressionVisitor<LiteralType> {
 
   private evaluate(expression: Expression) {
     return expression.accept(this);
+  }
+
+  private execute(statement: Stmt): void {
+    statement.accept(this);
+  }
+
+  visitExpressionStmt(statement: ExpressionStmt): void {
+    this.evaluate(statement.expression);
+  }
+  visitPrintStmt(statement: PrintStmt): void {
+    const value = this.evaluate(statement.expression);
+    console.log(this.stringify(value));
   }
 
   visitBinaryExpression(expression: BinaryExpression) {

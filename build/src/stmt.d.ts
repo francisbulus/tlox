@@ -1,5 +1,5 @@
 import { Expression } from './expression';
-declare abstract class Stmt {
+export declare abstract class Stmt {
     constructor();
     abstract accept<R>(visitor: StmtVisitor<R>): R;
 }
@@ -17,4 +17,3 @@ export interface StmtVisitor<T> {
     visitExpressionStmt(expression: ExpressionStmt): T;
     visitPrintStmt(expression: PrintStmt): T;
 }
-export {};

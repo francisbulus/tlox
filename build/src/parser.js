@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parser = void 0;
 const expression_1 = require("./expression");
 const lox_1 = require("./lox");
+const stmt_1 = require("./stmt");
 const types_1 = require("./types");
 class Parser {
     constructor(tokens) {
@@ -11,12 +12,26 @@ class Parser {
         this.current = 0;
     }
     parse() {
-        try {
-            return this.expression();
+        let statements = [];
+        while (!this.isAtEnd()) {
+            statements.push(this.statement());
         }
-        catch (err) {
-            return null;
-        }
+        return statements;
+    }
+    statement() {
+        if (this.match(types_1.TokenType.PRINT))
+            return this.printStatement();
+        return this.expressionStatement();
+    }
+    printStatement() {
+        const value = this.expression();
+        this.consume(types_1.TokenType.SEMICOLON, "Expect ';' after value.");
+        return new stmt_1.PrintStmt(value);
+    }
+    expressionStatement() {
+        const expr = this.expression();
+        this.consume(types_1.TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new stmt_1.ExpressionStmt(expr);
     }
     expression() {
         return this.equality();

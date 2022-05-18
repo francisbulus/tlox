@@ -6,6 +6,7 @@ import {
   UnaryExpression,
 } from './expression';
 import Lox from './lox';
+import {ExpressionStmt, PrintStmt, Stmt} from './stmt';
 import Token from './token';
 import {TokenType} from './types';
 
@@ -17,12 +18,29 @@ export class Parser {
     this.current = 0;
   }
 
-  parse(): Expression {
-    try {
-      return this.expression();
-    } catch (err) {
-      return null as never;
+  parse(): Stmt[] {
+    let statements = [];
+    while (!this.isAtEnd()) {
+      statements.push(this.statement());
     }
+    return statements;
+  }
+
+  private statement(): Stmt {
+    if (this.match(TokenType.PRINT)) return this.printStatement();
+    return this.expressionStatement();
+  }
+
+  private printStatement(): Stmt {
+    const value = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    return new PrintStmt(value);
+  }
+
+  private expressionStatement(): Stmt {
+    const expr = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+    return new ExpressionStmt(expr);
   }
 
   private expression(): Expression {
