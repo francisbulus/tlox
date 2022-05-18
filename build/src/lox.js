@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Lox = void 0;
 const fs = require("fs");
 const path = require("path");
 const repl = require("node:repl");
@@ -8,11 +7,12 @@ const scanner_1 = require("./scanner");
 const token_1 = require("./token");
 const generator_1 = require("./generator");
 const types_1 = require("./types");
-class Interpreter {
+const interpreter_1 = require("./interpreter");
+const parser_1 = require("./parser");
+class Lox {
     constructor(args) {
         this.args = args;
         this.args = args;
-        this.hadError = false;
     }
     init() {
         if (this.args.length > 3) {
@@ -43,8 +43,10 @@ class Interpreter {
         });
         readableStream.on('end', () => {
             this.run(data);
-            if (this.hadError)
-                throw Error("Looks like we've run into an error reading the file.");
+            if (Lox.hadError)
+                process.exit(65);
+            if (Lox.hadRuntimeError)
+                process.exit(70);
         });
     }
     runPrompt() {
@@ -53,15 +55,11 @@ class Interpreter {
     run(source) {
         const scanner = new scanner_1.default(source);
         const tokens = scanner.scanTokens();
-        tokens.forEach((token) => console.log(token));
-        // --- TEST FOR PARSER --- //
-        // const scanner = new Scanner(source);
-        // const tokens = scanner.scanTokens();
-        // const parser: Parser = new Parser(tokens);
-        // const expression: Expression = parser.parse();
-        // if (this.hadError) return;
-        // const str = new AstPrinter().print(expression);
-        // console.log(str);
+        const parser = new parser_1.Parser(tokens);
+        const expression = parser.parse();
+        if (Lox.hadError)
+            return;
+        Lox.interpreter.interpret(expression);
     }
     error(...args) {
         const [observable, msg] = args;
@@ -77,12 +75,19 @@ class Interpreter {
             this.report(observable, '', msg);
         }
     }
+    runtimeError(error) {
+        console.log(error.message + '\n[line ' + error.token.line + ']');
+        Lox.hadRuntimeError = true;
+    }
     report(line, where, msg) {
         console.error('[line ' + line + '] Error' + where + ': ' + msg);
-        this.hadError = true;
+        Lox.hadError = true;
     }
 }
-const Lox = new Interpreter(process.argv);
-exports.Lox = Lox;
-Lox.init();
+Lox.hadError = false;
+Lox.hadRuntimeError = false;
+Lox.interpreter = new interpreter_1.Interpreter();
+const TLOX = new Lox(process.argv);
+exports.default = TLOX;
+TLOX.init();
 //# sourceMappingURL=lox.js.map

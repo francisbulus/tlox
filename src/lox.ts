@@ -5,16 +5,18 @@ import Scanner from './scanner';
 import Token from './token';
 import GenerateAst from './generator';
 import {TokenType} from './types';
+import RuntimeError from './error';
+import {Interpreter} from './interpreter';
 import {Expression} from './expression';
 import {Parser} from './parser';
-import AstPrinter from './printer';
 
-class Interpreter {
-  private hadError: boolean;
+class Lox {
+  static hadError: boolean = false;
+  static hadRuntimeError: boolean = false;
+  static interpreter = new Interpreter();
 
   constructor(private args: string[]) {
     this.args = args;
-    this.hadError = false;
   }
 
   public init(): void {
@@ -45,8 +47,8 @@ class Interpreter {
     });
     readableStream.on('end', (): void => {
       this.run(data);
-      if (this.hadError)
-        throw Error("Looks like we've run into an error reading the file.");
+      if (Lox.hadError) process.exit(65);
+      if (Lox.hadRuntimeError) process.exit(70);
     });
   }
 
@@ -57,15 +59,10 @@ class Interpreter {
   private run(source: string): void {
     const scanner = new Scanner(source);
     const tokens = scanner.scanTokens();
-    tokens.forEach((token: Token) => console.log(token));
-    // --- TEST FOR PARSER --- //
-    // const scanner = new Scanner(source);
-    // const tokens = scanner.scanTokens();
-    // const parser: Parser = new Parser(tokens);
-    // const expression: Expression = parser.parse();
-    // if (this.hadError) return;
-    // const str = new AstPrinter().print(expression);
-    // console.log(str);
+    const parser: Parser = new Parser(tokens);
+    const expression: Expression = parser.parse();
+    if (Lox.hadError) return;
+    Lox.interpreter.interpret(expression);
   }
 
   public error(
@@ -85,12 +82,17 @@ class Interpreter {
     }
   }
 
+  runtimeError(error: RuntimeError): void {
+    console.log(error.message + '\n[line ' + error.token.line + ']');
+    Lox.hadRuntimeError = true;
+  }
+
   private report(line: number, where: string, msg: string): void {
     console.error('[line ' + line + '] Error' + where + ': ' + msg);
-    this.hadError = true;
+    Lox.hadError = true;
   }
 }
 
-const Lox = new Interpreter(process.argv);
-export {Lox};
-Lox.init();
+const TLOX = new Lox(process.argv);
+export default TLOX;
+TLOX.init();

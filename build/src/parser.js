@@ -64,7 +64,7 @@ class Parser {
         return this.tokens[this.current - 1];
     }
     error(token, message) {
-        lox_1.Lox.error(token, message);
+        lox_1.default.error(token, message);
         return new ParseError();
     }
     synchronize() {

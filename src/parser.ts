@@ -1,5 +1,5 @@
 import {Binary, Expression, Grouping, Literal, Unary} from './expression';
-import {Lox} from './lox';
+import Lox from './lox';
 import Token from './token';
 import {TokenType} from './types';
 
