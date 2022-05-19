@@ -14,8 +14,6 @@ export default class Token {
   }
 
   public toString(): string {
-    return (
-      this.line + ' | ' + this.type + ' ' + this.lexeme + ' ' + this.literal
-    );
+    return `${this.line} | ${this.type} ${this.lexeme} ${this.literal}`;
   }
 }

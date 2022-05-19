@@ -100,7 +100,7 @@ class Lox {
   }
 
   private report(line: number, where: string, msg: string): void {
-    console.error('[line ' + line + '] Error' + where + ': ' + msg);
+    console.log(`[line ${line}] Error${where}: ${msg}`);
     Lox.hadError = true;
   }
 }
