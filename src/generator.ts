@@ -7,6 +7,7 @@ export default class GenerateAst {
   private path!: string;
   public generate(): void {
     this.defineAst('Expression', [
+      'Assign > name: Token, value: Expression',
       'Binary   > left: Expression, operator: Token, right: Expression',
       'Grouping > expression: Expression',
       'Literal  > value: any',
@@ -40,8 +41,12 @@ export default class GenerateAst {
       const baseClassContent = `
       ${
         baseName !== 'Stmt'
-          ? `import Token from './token'`
-          : `import {Expression} from './expression';`
+          ? `import Token from './token'
+          `
+          : `import {Expression} from './expression';
+          import Token from './token'
+          
+          `
       }
       export abstract class ${baseName}{ 
         constructor() {}

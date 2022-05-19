@@ -1,6 +1,7 @@
 import {Environment} from './environment';
 import RuntimeError from './error';
 import {
+  AssignExpression,
   BinaryExpression,
   Expression,
   ExpressionVisitor,
@@ -56,6 +57,12 @@ export class Interpreter
       value = this.evaluate(statement.initializer);
     }
     this.environment.define(statement.name.lexeme, value);
+  }
+
+  visitAssignExpression(expression: AssignExpression): any {
+    const value = this.evaluate(expression.value);
+    this.environment.assign(expression.name, value);
+    return value;
   }
 
   visitBinaryExpression(expression: BinaryExpression) {

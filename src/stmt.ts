@@ -1,5 +1,6 @@
 import {Expression} from './expression';
 import Token from './token';
+
 export abstract class Stmt {
   constructor() {}
   abstract accept<R>(visitor: StmtVisitor<R>): R;

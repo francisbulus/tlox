@@ -1,4 +1,5 @@
 import {
+  AssignExpression,
   BinaryExpression,
   Expression,
   GroupingExpression,
@@ -54,8 +55,22 @@ export class Parser {
     return new ExpressionStmt(expr);
   }
 
+  private assignment(): Expression {
+    const expression = this.equality();
+    if (this.match(TokenType.EQUAL)) {
+      const equals = this.previous();
+      const value = this.assignment();
+      if (expression instanceof VariableExpression) {
+        const name = expression.name;
+        return new AssignExpression(name, value);
+      }
+      this.error(equals, 'Invalid assignment target.');
+    }
+    return expression;
+  }
+
   private expression(): Expression {
-    return this.equality();
+    return this.assignment();
   }
 
   private declaration(): Stmt {
