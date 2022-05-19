@@ -11,7 +11,14 @@ import {
   VariableExpression,
 } from './expression';
 import Lox from './lox';
-import {ExpressionStmt, PrintStmt, Stmt, StmtVisitor, VarStmt} from './stmt';
+import {
+  BlockStmt,
+  ExpressionStmt,
+  PrintStmt,
+  Stmt,
+  StmtVisitor,
+  VarStmt,
+} from './stmt';
 import Token from './token';
 import {LiteralType, TokenType} from './types';
 
@@ -40,6 +47,22 @@ export class Interpreter
 
   private execute(statement: Stmt): void {
     statement.accept(this);
+  }
+
+  visitBlockStmt(statement: BlockStmt): void {
+    this.executeBlock(statement.statements, new Environment(this.environment));
+  }
+
+  executeBlock(statements: Stmt[], environment: Environment) {
+    const previous = this.environment;
+    try {
+      this.environment = environment;
+      for (const statement of statements) {
+        this.execute(statement);
+      }
+    } finally {
+      this.environment = previous;
+    }
   }
 
   visitExpressionStmt(statement: ExpressionStmt): void {

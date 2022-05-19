@@ -8,7 +8,7 @@ import {
   VariableExpression,
 } from './expression';
 import Lox from './lox';
-import {ExpressionStmt, PrintStmt, Stmt, VarStmt} from './stmt';
+import {BlockStmt, ExpressionStmt, PrintStmt, Stmt, VarStmt} from './stmt';
 import Token from './token';
 import {TokenType} from './types';
 
@@ -30,6 +30,7 @@ export class Parser {
 
   private statement(): Stmt {
     if (this.match(TokenType.PRINT)) return this.printStatement();
+    if (this.match(TokenType.LEFT_BRACE)) return new BlockStmt(this.block());
     return this.expressionStatement();
   }
 
@@ -53,6 +54,15 @@ export class Parser {
     const expr = this.expression();
     this.consume(TokenType.SEMICOLON, "Expect ';' after expression.");
     return new ExpressionStmt(expr);
+  }
+
+  private block(): Stmt[] {
+    let staments = [];
+    while (!this.check(TokenType.RIGHT_BRACE) && !this.isAtEnd()) {
+      staments.push(this.declaration());
+    }
+    this.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+    return staments;
   }
 
   private assignment(): Expression {

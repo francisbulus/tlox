@@ -16,6 +16,7 @@ export default class GenerateAst {
     ]);
 
     this.defineAst('Stmt', [
+      'Block      > statements: Stmt[]',
       'Expression   > expression: Expression',
       'Print > expression: Expression',
       'Var > name: Token, initializer: Expression',
