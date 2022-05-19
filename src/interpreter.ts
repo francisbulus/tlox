@@ -1,3 +1,4 @@
+import {Environment} from './environment';
 import RuntimeError from './error';
 import {
   BinaryExpression,
@@ -16,12 +17,8 @@ import {LiteralType, TokenType} from './types';
 export class Interpreter
   implements ExpressionVisitor<LiteralType>, StmtVisitor<void>
 {
-  visitVariableExpression(expression: VariableExpression) {
-    throw new Error('Method not implemented.');
-  }
-  visitVarStmt(expression: VarStmt): void {
-    throw new Error('Method not implemented.');
-  }
+  private environment = new Environment();
+
   interpret(statements: Stmt[]): void {
     try {
       for (const statement of statements) {
@@ -47,9 +44,18 @@ export class Interpreter
   visitExpressionStmt(statement: ExpressionStmt): void {
     this.evaluate(statement.expression);
   }
+
   visitPrintStmt(statement: PrintStmt): void {
     const value = this.evaluate(statement.expression);
     console.log(this.stringify(value));
+  }
+
+  visitVarStmt(statement: VarStmt): void {
+    let value = null;
+    if (statement.initializer !== null) {
+      value = this.evaluate(statement.initializer);
+    }
+    this.environment.define(statement.name.lexeme, value);
   }
 
   visitBinaryExpression(expression: BinaryExpression) {
@@ -107,6 +113,10 @@ export class Interpreter
         return -parseFloat(right);
     }
     return null;
+  }
+
+  visitVariableExpression(expression: VariableExpression) {
+    return this.environment.get(expression.name);
   }
 
   private checkNumberOperand(operator: Token, operand: any): void {
