@@ -1,6 +1,6 @@
 import fs = require('fs');
 import path = require('path');
-import repl = require('node:repl');
+// import repl = require('node:repl');
 import Scanner from './scanner';
 import Token from './token';
 import GenerateAst from './generator';
@@ -9,6 +9,13 @@ import RuntimeError from './error';
 import {Interpreter} from './interpreter';
 import {Parser} from './parser';
 import {Stmt} from './stmt';
+import * as readline from 'node:readline';
+import {stdin as input, stdout as output} from 'node:process';
+
+const rl = readline.createInterface({
+  input,
+  output,
+});
 
 class Lox {
   static hadError: boolean = false;
@@ -31,7 +38,7 @@ class Lox {
       const fullPath: string = path.join('data/', this.args[2]);
       this.runFile(fullPath);
     } else {
-      this.runPrompt(); //This is not implemented yet
+      this.runPrompt();
     }
   }
 
@@ -53,7 +60,12 @@ class Lox {
   }
 
   private runPrompt(): void {
-    repl.start();
+    rl.question('> ', answer => {
+      if (!answer) process.exit(1);
+      this.run(answer);
+      Lox.hadError = false;
+      this.runPrompt();
+    });
   }
 
   private run(source: string): void {
@@ -62,7 +74,7 @@ class Lox {
     const parser: Parser = new Parser(tokens);
     const statements: Stmt[] = parser.parse();
     if (Lox.hadError) return;
-    Lox.interpreter.interpret(statements);
+    return Lox.interpreter.interpret(statements);
   }
 
   public error(
