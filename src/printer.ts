@@ -6,9 +6,13 @@ import {
   UnaryExpression,
   Expression,
   VariableExpression,
+  AssignExpression,
 } from './expression';
 
 export default class AstPrinter implements ExpressionVisitor<string> {
+  visitAssignExpression(expression: AssignExpression): string {
+    throw new Error('Method not implemented.');
+  }
   visitVariableExpression(expression: VariableExpression): string {
     throw new Error('Method not implemented.');
   }
