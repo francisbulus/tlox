@@ -105,6 +105,6 @@ class Lox {
   }
 }
 
-const TLOX = new Lox(process.argv);
-export default TLOX;
-TLOX.init();
+const Tlox = new Lox(process.argv);
+export default Tlox;
+Tlox.init();
